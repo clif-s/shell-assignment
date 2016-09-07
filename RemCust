@@ -1,0 +1,109 @@
+#!/bin/bash
+
+# Author:  clif-s
+# Course:  ICT Skills - HDip in Computer Science 2016
+# Subject: Computer Systems - Shell Programming Assignment
+
+# Program Description:
+
+# This is the Remove Customer menu for the shell programming assignment.
+
+source ExampleRepos.sh      # Imports the ExampleRepos.sh function repository.
+
+while :
+    do
+    clear
+    echo "$(tput setaf 2)$(tput bold)Remove Customer(s)$(tput sgr 0) - Please choose one of the following:"
+    echo ""
+    echo "      1. Remove a Customer"
+    echo "      2. Remove all Customer(s)"
+    echo "      M. Main Menu"
+    echo ""
+    echo -n "Please select : [1, 2, or M] "
+
+        # Returns error message and instructions if CustomerDetails
+        # does not exist. This then directs to the main menu.
+        if [[ ! -f CustomerDetails ]]; then
+        echo    ""
+        echo    ""
+        echo    "$(tput setaf 1)ERROR$(tput sgr 0) CustomerDetails can not be found! $(tput setaf 1)ERROR$(tput sgr 0)"
+        echo    "      Please add at least one customer!"
+        echo    ""
+        echo -n "      Press [enter] key to return to main menu"
+        read enterKey
+        echo    ""
+        echo -n "      Returning to main menu..."
+        sleep 1.92
+        ./Menu; exit 1
+        fi
+
+    read sel
+    case $sel in
+
+        1)      remove_customer     # runs the function contained in ExampleRepos.sh
+                ;;
+        2)      echo    ""
+                echo    "$(tput setaf 1)WARNING$(tput sgr 0): This will remove all customers"
+                echo    ""
+                echo    "Are you sure you wish to proceed"
+                echo -n "Enter [Y / N] "
+                unset yn
+                while [[ ! $yn =~ [y|Y|n|N] ]]; do          # Loops until input is Y or N
+                    read yn                                 
+                    case $yn in
+                        y | Y)  echo    ""
+                                echo    "Please confirm"
+                                echo -n "Enter [Y / N] "
+                                unset yn
+                                while [[ ! $yn =~ [y|Y|n|N] ]]; do          # Loops until input is Y or N
+                                    read yn
+                                    case $yn in
+                                        y | Y)  rm CustomerDetails                  # Deletes CustomerDetails
+                                                touch     "CustomerDetails"         # Recreates CustomerDetails
+                                                chmod 777 "CustomerDetails"         # Changes privileges of CustomerDetails
+                                                sleep 0.96
+                                                echo    ""
+                                                echo    "      All customers removed! "
+                                                sleep 1.92
+                                                echo    ""
+                                                echo -n "      Returning to previous menu...  "
+                                                sleep 1.92
+                                                ;;
+                                        n | N)  sleep 0.96
+                                                echo    ""
+                                                echo    "      Cancelling! "
+                                                sleep 1.92
+                                                echo    ""
+                                                echo -n "      Returning to previous menu...  "
+                                                sleep 1.92
+                                                ;;
+                                        *)      echo    ""
+                                                echo    "$yn is invalid. Please confirm"
+                                                echo -n "Enter [Y / N] "
+                                                ;;
+                                    esac
+                                done
+                                ;;
+                        n | N)  sleep 0.96
+                                echo    ""
+                                echo    "      Cancelling! "
+                                sleep 1.92
+                                echo    ""
+                                echo -n "      Returning to previous menu...  "
+                                sleep 1.92
+                                ;;
+                        *)      echo    ""
+                                echo -n "$yn is invalid. Please select [Y / N] "
+                                ;;
+                    esac
+                done
+                ;;
+        m | M)  ./Menu; exit 1
+                ;;
+        *)      echo    ""
+                echo    "$sel is invalid. Please select [1, 2, or M]";
+                echo -n "Press [enter] key to continue...";
+                read enterKey
+                ;;
+    esac
+done

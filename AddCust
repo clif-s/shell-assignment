@@ -1,0 +1,302 @@
+#!/bin/bash
+
+# Author:  clif-s
+# Course:  ICT Skills - HDip in Computer Science 2016
+# Subject: Computer Systems - Shell Programming Assignment
+
+# Program Description:
+
+# This is the Add Customer menu for the shell programming assignment.
+# It allows the user to add a customer to the CustomerDetails file with
+# the fields: "<E-mail>" "<Name>" "<Alias>" "<Address>" "<Phone>" 
+
+while : # Perpetual loop until exit.
+    do
+    clear
+    echo    "$(tput setaf 2)$(tput bold)Add new Customer$(tput sgr 0) - Please choose one of the following:"
+    echo    ""
+    echo    "      1. Add a new Customer"
+    echo    "      M. Main Menu"
+    echo    ""
+    echo -n "Please select : [1 or M] "
+
+    read sel
+    case $sel in
+
+        1)      clear
+
+                # Unset ensures that these fields are blank and thus avoids possible
+                # interference with the while loops and conditions upon initiation.
+
+                unset email name alias address phone yn
+                
+                # Checks if CustomerDetails exists, and if not, this creates the
+                # file.
+
+                if [[ ! -f CustomerDetails ]]; then
+                    touch     "CustomerDetails"
+                    chmod 777 "CustomerDetails"
+                fi
+
+                echo                                "$(tput setaf 2)$(tput bold)Add new Customer$(tput sgr 0) - Please enter the following details:"
+                echo "[Esc] key to return"
+                echo                                ""
+                echo -n                             "      E-mail Address:   "
+
+                # While loops are used for each field and return feedback to
+                # the user such as instructions for inputting data, errors, 
+                # whether input is successful, and on how to return to the
+                # previous menu should the user wish to end the process early.
+                # The "Esc" key is accepted by each loop as a means to return
+                # to the previous menu but this is also covered by the
+                # "./AddCust" and "exit 1" statements as hard resets.
+
+                # Loops until there is input in the # *?"@"?*"."?* format so
+                # that it can be seen as an email format, albeit this is
+                # rudimentary. This may be expanded upon by storing a list
+                # of suitable domain suffixes that can be checked against.
+                while [[ "$email" != *?"@"?*"."?* && "$email" != $'\e' ]]; do
+                    read email
+                    case $email in
+                        $'\e')          echo        ""
+                                        echo -n     "      Returning to previous menu...  "
+                                        sleep 1.92
+                                        ./AddCust
+                                        exit 1
+                                        ;;
+
+                        *?"@"?*"."?*)   email=$(echo "$email" | tr '[:upper:]' '[:lower:]') # Change input to lowercase.
+                                        emailcheck=$(grep -i -c -w $email CustomerDetails)  # Stores email addresses matches between input and CustomerDetails.
+                                                                                            # Uses -w to avoid crossover between domain suffixes such as
+                                                                                            # ".com" and ".community".
+                                        
+                                        emaillength=${#email}                               # Stores the length of input.
+                                        # Returns message if input is too long.
+                                        if [[ $emaillength -gt 25 ]]; then                  
+                                            echo        "                        $(tput setaf 1)$email is not valid$(tput sgr 0)"
+                                            echo        ""
+                                            echo        "The E-mail field can only be 25 characters in length!"
+                                            echo        "Please enter a shorter E-mail or enter [Esc key]"
+                                            echo        "to return to previous menu"
+                                            echo        ""
+                                            echo -n     "      E-mail Address:   "
+                                            unset email
+                                        elif [[ $emailcheck -gt 0 ]]; then                  # Returns message if input is not unique.
+                                            echo        "                        $(tput setaf 1)$email is not valid$(tput sgr 0)"
+                                            echo        ""
+                                            echo        "This E-mail has already been taken and is not available!"
+                                            echo        "Please enter a different E-mail or enter [Esc key] to"
+                                            echo        "return to previous menu"
+                                            echo        ""
+                                            echo -n     "      E-mail Address:   "
+                                            unset email
+                                        else
+                                            echo        "                        $(tput setaf 2)$email is valid$(tput sgr 0)"
+                                        fi
+                                        ;;
+                                        # Returns message if input is not in correct format.
+                        *)              echo        "                        $(tput setaf 1)$email is not valid$(tput sgr 0)"
+                                        echo        ""
+                                        echo        "Please re-enter in "abc@abc.abc" format or enter [Esc key]"
+                                        echo        "to return to previous menu"
+                                        echo        ""
+                                        echo -n     "      E-mail Address:   "
+                                        ;;
+                    esac
+                done
+
+                echo -n                             "      Name:             "
+                
+                # Loops until input has separating space so
+                # valid input is in FirstName LastName style.
+                while [[ $name != *?" "*? && "$name" != $'\e' ]]; do
+                    read name
+                    case $name in
+                        $'\e')          echo        ""
+                                        echo -n     "      Returning to previous menu...  "
+                                        sleep 1.92
+                                        ./AddCust
+                                        exit 1
+                                        ;;
+                                        # Stores length of input.
+                        *?" "*?)        namelength=${#name}
+                                        # Returns message if input is too long.
+                                        if [[ $namelength -gt 20 ]]; then
+                                            echo        "                        $(tput setaf 1)$name is not valid$(tput sgr 0)"
+                                            echo        ""
+                                            echo        "The Name field can only be 20 characters in length!"
+                                            echo        "Please enter a shorter FirstName LastName or enter"
+                                            echo        "[Esc key] to return to previous menu"
+                                            echo        ""
+                                            echo -n     "      Name:             "
+                                            unset name
+                                        else
+                                            echo        "                        $(tput setaf 2)$name is valid$(tput sgr 0)"
+                                        fi
+                                        ;;
+                                        # Returns message if input is not in correct format.
+                        *)              echo        "                        $(tput setaf 1)$name is not valid$(tput sgr 0)"
+                                        echo        ""
+                                        echo        "Please re-enter in FirstName LastName format or enter [Esc key]"
+                                        echo        "to return to previous menu"
+                                        echo        ""
+                                        echo -n     "      Name:             "
+                                        ;;
+                    esac
+                done
+
+                echo -n                             "      Alias:            "
+                
+                # Loops until input is not blank.
+                while [[ $alias != *? && "$alias" != $'\e' ]]; do
+                    read alias
+                    case $alias in
+                        $'\e')          echo        ""
+                                        echo -n     "      Returning to previous menu...  "
+                                        sleep 1.92
+                                        ./AddCust
+                                        exit 1
+                                        ;;
+                        *?)             aliaslength=${#alias}                               # Stores the length of the input.
+                                        if [[ $aliaslength -gt 10 ]]; then                  # Returns message to user if the input is too long.
+                                            echo        "                        $(tput setaf 1)$alias is not valid$(tput sgr 0)"
+                                            echo        ""
+                                            echo        "The Alias field can only be 10 characters in length!"
+                                            echo        "Please enter a shorter Alias or enter [Esc key] to"
+                                            echo        "return to previous menu"
+                                            echo        ""
+                                            echo -n     "      Alias:            "
+                                            unset alias
+                                        else
+                                            echo        "                        $(tput setaf 2)$alias is valid$(tput sgr 0)"
+                                        fi
+                                        ;;
+                                        # Returns message if input is blank.
+                        *)              echo        "                        $(tput setaf 1)$alias is not valid$(tput sgr 0)"
+                                        echo        ""
+                                        echo        "Alias can not be blank - Please enter an Alias or enter [Esc key]"
+                                        echo        "to return to previous menu"
+                                        echo        ""
+                                        echo -n     "      Alias:            "
+                                        ;;
+                    esac
+                done
+                
+                # Loops until input is not blank.
+                echo -n                             "      Address:          "
+                while [[ $address != *? && "$address" != $'\e' ]]; do
+                    read address
+                    case $address in
+                        $'\e')          echo        ""
+                                        echo -n     "      Returning to previous menu...  "
+                                        sleep 1.92
+                                        ./AddCust
+                                        exit 1
+                                        ;;
+                        *?)             addresslength=${#address}                           # Stores the length of the input.
+                                        if [[ $addresslength -gt 20 ]]; then                # Returns message to user if the input is too long.
+                                            echo        "                        $(tput setaf 1)$address is not valid$(tput sgr 0)"
+                                            echo        ""
+                                            echo        "The Address field can only be 20 characters in length!"
+                                            echo        "Please enter a shorter Address or enter [Esc key] to"
+                                            echo        "return to previous menu"
+                                            echo        ""
+                                            echo -n     "      Address:          "
+                                            unset address
+                                        else
+                                            echo        "                        $(tput setaf 2)$address is valid$(tput sgr 0)"
+                                        fi
+                                        ;;
+
+                                        # Returns message if input is blank. 
+                        *)              echo        "                        $(tput setaf 1)$address is not valid$(tput sgr 0)"
+                                        echo        ""
+                                        echo        "Address can not be blank - Please enter an Address"
+                                        echo        "or enter [Esc key] to return to previous menu"
+                                        echo        ""
+                                        echo -n     "      Address:          "
+                                        ;;
+                    esac
+                done
+
+                echo -n                             "      Telephone Number: "
+                
+                # Loops until input contains only numbers and is between 5 and 15 in length.
+                while [[ ! $phone =~ [0-9]{5,15} ]]; do
+                    read phone
+                    if [[ $phone =~ [0-9]{5,15} ]]; then
+                                        echo        "                        $(tput setaf 2)$phone is valid$(tput sgr 0)"
+                                        echo        ""
+                                        echo        "Press [enter] key to review..."
+                        read enterKey
+                                        echo        "      One moment please..."
+                        sleep 1.92
+                    elif [[ $phone = $'\e' ]]; then
+                                        echo -n     "      Returning to previous menu...  "
+                                        sleep 1.92
+                                        ./AddCust
+                                        exit 1
+                    # Returns message if input is: too long, too short, or doesn't contain not numbers.
+                    else
+                                        echo        "                        $(tput setaf 1)$phone is not valid$(tput sgr 0)"
+                                        echo        ""
+                                        echo        "Please re-enter in a numbers only format with 5 - 15 digits"
+                                        echo        "or enter [Esc key] to return to previous menu"
+                                        echo        ""
+                                        echo -n     "      Telephone Number: "
+                    fi
+                done
+
+                # Once user has completed all fields, they will be brought
+                # to a review screen and asked to confirm the details.
+                while [[ ! $yn =~ [y|Y|n|N] ]]; do
+                    clear
+                    echo        "Add new Customer. Please confirm the following details:"
+                    echo        ""
+                    echo        "      E-mail Address:   $email"
+                    echo        "      Name:             $name"
+                    echo        "      Alias:            $alias"
+                    echo        "      Address:          $address"
+                    echo        "      Telephone Number: $phone"
+                    echo        ""
+                    echo        "Are the above details correct? "
+                    echo -n     "Enter [Y / N] "
+                    read yn
+
+                    # Another section using backspaces.
+
+                    case $yn in
+                        y | Y)          printf          "\n%-25s %-20s %-10s %-20s %-15s" "$email" "$name" "$alias" "$address" "$phone" >> CustomerDetails
+                                        sleep 0.96
+                                        echo            ""
+                                        echo -n         "      Customer Added!"
+                                        sleep 1.92
+                                        echo -en        "\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b"
+                                        echo -n         "      Returning to previous menu..."
+                                        sleep 1.92
+                                        ;;
+                        n | N)          sleep 0.96
+                                        echo            ""
+                                        echo -n         "      Cancelling: Customer not Added!"
+                                        sleep 1.92
+                                        echo -en        "\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b"
+                                        echo -n         "      Returning to previous menu...  "
+                                        sleep 1.92
+                                        ;;
+                        *)              echo            ""
+                                        echo            "$yn is invalid. Please select [Y / N]"
+                                        echo -n         "Press [enter] key to continue..."
+                                        read enterKey
+                                        ;;
+                    esac
+                done
+                ;;
+        m | M)  ./Menu; exit 1
+                ;;
+        *)      echo    ""
+                echo    "$sel is invalid. Please select [1, or M]"
+                echo -n "Press [enter] key to continue..."
+                read enterKey
+                ;;
+    esac
+done

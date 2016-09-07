@@ -1,0 +1,96 @@
+#!/bin/bash
+
+# Author:  clif-s
+# Course:  ICT Skills - HDip in Computer Science 2016
+# Subject: Computer Systems - Shell Programming Assignment
+
+# Program Description:
+
+# This is the Main Menu for the shell programming assignment.
+# All the menus were designed to be perpetual loops from where
+# the user may jump from file to file. This was permitted and
+# the student originally saw this as a means for facilitating
+# a modular framework. This created several challenges during
+# the course of the assignment, but these were overcome. A
+# functions repository was created to illustrate additional
+# coding skills.
+
+source ExampleRepos.sh      # Imports the ExampleRepos.sh function repository.
+
+while :                     # Perpetual loop until exit.
+    do                      
+
+                            # Different colours and font styles are used sparingly
+                            # throughout this assignment as a coding exercise and
+                            # thus do not require a colours reference section.
+
+    clear
+    echo "$(tput setaf 2)$(tput bold)Welcome$(tput sgr 0) - Please choose one of the following:"
+    echo ""
+    echo "      1. Add a new Customer"
+    echo "      2. Remove an existing Customer"
+    echo "      3. Search for a Customer"
+    echo "      4. E-mail a Customer"
+    echo "      Q. Quit"
+    echo ""
+    echo -n "Please select : [1 - 4, or Q] "
+    
+    read sel
+    case $sel in
+
+        1)      ./AddCust; exit 1   # Exits the Main Menu and runs the AddCust file.
+                ;;
+
+        2)      ./RemCust; exit 1   # Exits the Main Menu and runs the RemCust file.
+                ;;
+
+        3)      ./FindCust; exit 1  # Exits the Main Menu and runs the FindCust file.
+                ;;
+
+        4)      ./EmailCust; exit 1 # Exits the Main Menu and runs the EmailCust file.
+                ;;
+
+                # The Q section runs a "spin" animation when quitting back to the shell.
+
+                # Runs the animation function in ExampleRepos.sh
+
+                # The additional "pseudo" animation is created using backspaces on the
+                # same line. Alternatives to using backspaces include carriage return (\r)
+                # or (echo -ne "\003[2k" ; printf "\r") but both of these solutions were not
+                # found until after the first implimentation was written. It is noted that
+                # (\r) may not allow the correct positioning of the spin animation.
+
+        q | Q)  echo ""
+                animation & echo -n "      "" Please wait: Quitting"
+                animation_pid=$!
+                echo -en "\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b"
+                sleep 0.96                                                  # Sleep instructions
+                echo -n  " Please wait: Quitting."                          # timed to match the
+                echo -en "\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b"   # the spin animation
+                sleep 0.96                                                  # and subsequently
+                echo -n  " Please wait: Quitting.."                         # used for consistency.
+                echo -en "\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b"
+                sleep 0.96
+                echo -n  " Please wait: Quitting..."
+                echo -en "\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b"
+                sleep 0.96
+                echo -n  " Please wait: Finished   "
+                echo -en "\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b"
+                sleep 0.96
+                echo -n  " Goodbye!             "
+                kill -PIPE $animation_pid &>/dev/null                       # Kills the animation.
+                echo -en "\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b"
+                sleep 1.92
+                clear;
+                exit 1
+                ;;
+
+                # A wildcard is used to handle undesired input from the user.
+
+        *)      echo    ""
+                echo    "($sel) is invalid. Please select : [1 - 4, or Q] ";
+                echo -n "Press [enter] key to continue...";
+                read enterKey
+                ;;
+    esac
+done

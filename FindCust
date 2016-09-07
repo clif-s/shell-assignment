@@ -1,0 +1,129 @@
+#!/bin/bash
+
+# Author:  clif-s
+# Course:  ICT Skills - HDip in Computer Science 2016
+# Subject: Computer Systems - Shell Programming Assignment
+
+# Program Description:
+
+# This is the Find Customer menu for the shell programming assignment.
+
+source ExampleRepos.sh      # Imports the ExampleRepos.sh function repository.
+
+while :
+    do
+    clear
+    echo "$(tput setaf 2)$(tput bold)Search Customer(s)$(tput sgr 0) - Please choose one of the following:"
+    echo ""
+    echo "      1. Search for a Customer"
+    echo "      2. List all Customers"
+    echo "      M. Main Menu"
+    echo ""
+    echo -n "Please select : [1, 2, or M] "
+
+        # Returns an error message and instructions to the user
+        # if CustomerDetails does not exist. This then returns
+        # the user to the main menu.
+
+        if [[ ! -f CustomerDetails ]]; then
+        echo    ""
+        echo    ""
+        echo    "$(tput setaf 1)ERROR$(tput sgr 0) CustomerDetails can not be found! $(tput setaf 1)ERROR$(tput sgr 0)"
+        echo    "      Please add at least one customer!"
+        echo    ""
+        echo -n "      Press [enter] key to return to main menu"
+        read enterKey
+        echo    ""
+        echo -n "      Returning to main menu..."
+        sleep 1.92
+        ./Menu; exit 1
+        fi
+    
+    read sel
+    case $sel in
+
+        1)      search_customer     # runs the function contained in ExampleRepos.sh
+                ;;
+        2)      unset sortall
+                # Loops until input is M or Esc
+                while [[ ! $sortall =~ [m|M] && "$sortall" != $'\e' ]]; do
+                    clear
+                    echo    "$(tput setaf 2)$(tput bold)List all Customers$(tput sgr 0) - Please choose one of the following:"
+                    echo    ""
+                    echo    "      1. Sort by Email"
+                    echo    "      2. Sort by First Name"
+                    echo    "      3. Sort by Last Name"
+                    echo    "      4. Sort by Alias"
+                    echo    "      5. Sort by Address"
+                    echo    "      M. Return to Previous Menu"
+                    echo    ""
+                    echo -n "Please select : [1 - 5, or M] "
+                    read sortall
+                    case $sortall in
+                        1)      clear
+                                echo    "$(tput setaf 2)$(tput bold)List all Customers$(tput sgr 0) - Email Sort"
+                                echo    ""
+                                echo    "<E-mail>                  <Name>               <Alias>    <Address>            <Phone>"
+                                echo    "$(sort -k1 <CustomerDetails)"  # Prints a sorted list of CustomerDetails according to first column
+                                echo    ""
+                                echo -n "Press [enter] key to return...";
+                                read enterKey
+                                ;;
+                        2)      clear
+                                echo    "$(tput setaf 2)$(tput bold)List all Customers$(tput sgr 0) - First Name Sort"
+                                echo    ""
+                                echo    "<E-mail>                  <Name>               <Alias>    <Address>            <Phone>"
+                                echo    "$(sort -k2 <CustomerDetails)"  # Prints a sorted list of CustomerDetails according to second column
+                                echo    ""
+                                echo -n "Press [enter] key to return...";
+                                read enterKey
+                                ;;
+                        3)      clear
+                                echo    "$(tput setaf 2)$(tput bold)List all Customers$(tput sgr 0) - Last Name Sort"
+                                echo    ""
+                                echo    "<E-mail>                  <Name>               <Alias>    <Address>            <Phone>"
+                                echo    "$(sort -k3 <CustomerDetails)"  # Prints a sorted list of CustomerDetails according to third column
+                                echo    ""
+                                echo -n "Press [enter] key to return...";
+                                read enterKey
+                                ;;
+                        4)      clear
+                                echo    "$(tput setaf 2)$(tput bold)List all Customers$(tput sgr 0) - Alias Sort"
+                                echo    ""
+                                echo    "<E-mail>                  <Name>               <Alias>    <Address>            <Phone>"
+                                echo    "$(sort -k4 <CustomerDetails)"  # Prints a sorted list of CustomerDetails according to fourth column
+                                echo    ""
+                                echo -n "Press [enter] key to return...";
+                                read enterKey
+                                ;;
+                        5)      clear
+                                echo    "$(tput setaf 2)$(tput bold)List all Customers$(tput sgr 0) - Address Sort"
+                                echo    ""
+                                echo    "<E-mail>                  <Name>               <Alias>    <Address>            <Phone>"
+                                echo    "$(sort -k5 <CustomerDetails)"  # Prints a sorted list of CustomerDetails according to fifth column
+                                echo    ""
+                                echo -n "Press [enter] key to return...";
+                                read enterKey
+                                ;;
+                        m | M)  sleep 1.92
+                                echo    ""
+                                echo -n "      Returning to previous menu...  "
+                                sleep 1.92
+                                ;;
+                        *)      echo    ""
+                                echo    "$sortall is invalid. Please select [1 - 5, or M]";
+                                echo -n "Press [enter] key to continue...";
+                                read enterKey
+                                ;; 
+                    esac
+                done
+                ;;
+        m | M)  ./Menu; exit 1
+                ;;
+        *)      echo    ""
+                echo    "$sel is invalid. Please select [1, 2, or M]";
+                echo -n "Press [enter] key to continue...";
+                read enterKey
+                ;; 
+    esac
+done
